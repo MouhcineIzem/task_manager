@@ -6,5 +6,5 @@ export interface UserPayload {
 
 
 export interface AuthRequest extends Request {
-    users?: UserPayload
+    user?: UserPayload
 }

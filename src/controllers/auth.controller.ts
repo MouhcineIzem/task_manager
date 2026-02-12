@@ -41,6 +41,8 @@ export const register = async (req: Request, res: Response) => {
             name: user.name,
         });
 
+        console.log('TOKEN ====> ', token);
+
         res.status(201).json({ user, token });
     } catch (error) {
         console.error('Register error: ', error);
