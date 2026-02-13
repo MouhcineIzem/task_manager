@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 import authRoutes from "./routes/auth.routes";
 import projectRoutes from "./routes/project.routes";
+import taskRoutes from "./routes/task.routes";
+import columnRoutes from "./routes/column.routes";
 
 
 
@@ -25,6 +27,8 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
+app.use('/api/task', taskRoutes);
+app.use('/api/columns', columnRoutes);
 
 
 app.listen(PORT, () => {
