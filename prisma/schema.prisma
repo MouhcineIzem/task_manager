@@ -102,7 +102,7 @@ model Tag {
   id        String    @id @default(uuid())
   name      String    @unique
   color     String
-  taks      TaskTag[]
+  tasks      TaskTag[]
   createdAt DateTime  @default(now())
 }
 
