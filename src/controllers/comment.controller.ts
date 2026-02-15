@@ -1,6 +1,7 @@
 import { Response } from 'express';
 import { PrismaClient } from '../generated/prisma/client';
 import { AuthRequest } from "../types";
+import {emitToProject} from "../socket/socketHandler";
 
 
 const prisma = new PrismaClient();
@@ -60,6 +61,14 @@ export const createComment = async (req: AuthRequest, res: Response) => {
                     },
                 },
             },
+        });
+
+        // Emettre l'événement Socket
+        emitToProject(io, task.column.project.id, 'comment:created', {
+            comment,
+            taskId,
+            projectId: task.column.project.id,
+            userId,
         });
 
         res.status(201).json(comment);

@@ -1,6 +1,8 @@
 import { Response } from 'express';
 import { AuthRequest } from "../types";
 import { PrismaClient } from '../generated/prisma/client';
+import { io } from '../index';
+import { emitToProject } from "../socket/socketHandler";
 
 
 const prisma = new PrismaClient();
@@ -84,6 +86,13 @@ export const createTask = async (req: AuthRequest, res: Response) => {
                     select: {comments: true},
                 },
             },
+        });
+
+        // Emettre l'événement Socket
+        emitToProject(io, column.projectId, 'task:created', {
+            task,
+            projectId: columnn.projectId,
+            userId,
         });
 
         res.status(201).json(task);
@@ -221,6 +230,13 @@ export const updateTask = async (req: AuthRequest, res: Response) => {
             },
         });
 
+        // Emettre l'événement Socket
+        emitToProject(io, task.column.project.id, 'task:updated', {
+            task: updatedTask,
+            projectId: task.column.project.id,
+            userId,
+        });
+
         res.json(updatedTask);
 
     } catch (error) {
@@ -259,6 +275,12 @@ export const deleteTask = async (req: AuthRequest, res: Response) => {
 
         await prisma.task.delete({
             where: { id },
+        });
+
+        // Emettre l'événement Socket
+        emitToProject(io, projectId, 'task:deleted', {
+            taskId: id,
+            projectId,
         });
 
         res.json({ message: 'Task deleted successfully' });
@@ -394,6 +416,16 @@ export const moveTask = async (req: AuthRequest, res: Response) => {
                     select: { comments: true },
                 },
             },
+        });
+
+        // Emettre l'événement Socket
+        emitToProject(io, task.column.project.id, 'task:moved', {
+            taskId: id,
+            oldColumnId,
+            newColumnId: columnId,
+            newOrder: order,
+            projectId: task.column.project.id,
+            userId,
         });
 
         res.json(updateTask);
